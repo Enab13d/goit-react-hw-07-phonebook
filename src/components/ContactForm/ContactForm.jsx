@@ -1,24 +1,21 @@
 import { Field, ContactsForm, Label, SubmitBtn } from './ContactForm.styled';
-import { useDispatch, useSelector } from 'react-redux';
-import { addContact, getContactsValue } from 'features/contacts/contactsSlice';
-import { nanoid } from 'nanoid';
+import { useFetchContactsQuery, useAddContactMutation } from 'services/contactsAPI';
 
 export const ContactForm = () => {
-  const contacts = useSelector(getContactsValue);
-  const dispatch = useDispatch();
+  const {data: contacts} = useFetchContactsQuery()
+  const [addContact, {isFetching}] = useAddContactMutation();
   const handleSubmit = e => {
     e.preventDefault();
     const { name, number } = e.target.elements;
+    console.log(number.value);
     const value = name.value;
-    let id = nanoid();
     const isContain = contacts ? contacts.some(
       contact => contact.name.toLowerCase() === value.toLowerCase()
     ) : null;
     if (isContain) {
       return alert(`${value} is already in contacts.`);
     }
-    const tel = number.value;
-    dispatch(addContact({ name: value, number: tel, id }));
+    addContact({ name: value, phone: number.value });
     e.target.reset();
   };
 
@@ -42,7 +39,7 @@ export const ContactForm = () => {
         title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
         required
       />
-      <SubmitBtn>Add Contact</SubmitBtn>
+      <SubmitBtn>{isFetching? 'Adding...': 'Add Contact'}</SubmitBtn>
     </ContactsForm>
   );
 };

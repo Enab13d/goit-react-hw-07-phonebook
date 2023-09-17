@@ -1,21 +1,22 @@
 import { DeleteBtn, Item, Name } from './Contact.styled';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-import { removeContact } from 'features/contacts/contactsSlice';
-export const Contact = ({ name, number, id }) => {
-  const dispatch = useDispatch();
+import { useFetchContactsQuery } from 'services/contactsAPI';
+import { useDeleteContactMutation } from 'services/contactsAPI';
 
+export const Contact = ({ name, phone, id }) => {
+  const { isFetching} = useFetchContactsQuery()
+  const [deleteContact] = useDeleteContactMutation();
   return (
     <Item key={id}>
       <Name>
-        {name}: {number}
+        {name}: {phone}
       </Name>
       <DeleteBtn
         type="button"
-        onClick={() => dispatch(removeContact(id))}
+        onClick={() => deleteContact(id)}
         id={id}
-      >
-        Delete
+      >{isFetching ? 'Deleting...' : 'Delete'}
+
       </DeleteBtn>
     </Item>
   );
@@ -23,6 +24,6 @@ export const Contact = ({ name, number, id }) => {
 
 Contact.propTypes = {
   name: PropTypes.string.isRequired,
-  number: PropTypes.string.isRequired,
+  phone: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
 };
