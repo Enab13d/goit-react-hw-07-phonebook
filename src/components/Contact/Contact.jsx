@@ -1,22 +1,29 @@
-import { DeleteBtn, Item, Name } from './Contact.styled';
+import {
+  DeleteBtn,
+  Item,
+  ContactBlock,
+  ContactName,
+  ContactNumber,
+} from './Contact.styled';
 import PropTypes from 'prop-types';
-import { useFetchContactsQuery } from 'services/contactsAPI';
 import { useDeleteContactMutation } from 'services/contactsAPI';
-
+import { DeleteIcon } from './Contact.styled';
+import { RotatingLines } from 'react-loader-spinner';
 export const Contact = ({ name, phone, id }) => {
-  const { isFetching} = useFetchContactsQuery()
-  const [deleteContact] = useDeleteContactMutation();
+  const [deleteContact, { originalArgs, isLoading }] =
+    useDeleteContactMutation();
   return (
     <Item key={id}>
-      <Name>
-        {name}: {phone}
-      </Name>
-      <DeleteBtn
-        type="button"
-        onClick={() => deleteContact(id)}
-        id={id}
-      >{isFetching ? 'Deleting...' : 'Delete'}
-
+      <ContactBlock>
+        <ContactName>{name}</ContactName>
+        <ContactNumber>{phone}</ContactNumber>
+      </ContactBlock>
+      <DeleteBtn type="button" onClick={() => deleteContact(id)} id={id}>
+        {isLoading && originalArgs === id ? (
+          <RotatingLines strokeColor="white" width="20" />
+        ) : (
+          <DeleteIcon title="remove contact" />
+        )}
       </DeleteBtn>
     </Item>
   );

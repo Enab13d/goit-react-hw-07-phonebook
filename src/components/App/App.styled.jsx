@@ -5,4 +5,6 @@ export const Wrapper = styled.div`
   margin-right: auto;
   width: 400px;
   padding: ${theme.sizing(3)};
+  background-color: ${theme.colors.transparentWhiteBg};
+  backdrop-filter: blur(12px);
 `;
